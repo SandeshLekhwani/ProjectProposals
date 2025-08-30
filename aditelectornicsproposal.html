@@ -13,40 +13,34 @@
         /* Custom Styles for the Glassmorphic Book Layout */
         body {
             font-family: 'Inter', sans-serif;
-            background: #111827; /* Dark background */
+            background-color: #0c1422; /* Darker base color */
+            background-image: radial-gradient(at 47% 33%, hsl(210.00, 70%, 25%) 0, transparent 59%),
+                              radial-gradient(at 82% 65%, hsl(287.65, 60%, 28%) 0, transparent 55%);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             padding: 1rem;
+            padding-top: 120px; /* Increased Space for header */
             padding-bottom: 120px; /* Space for the fixed CTA footer */
             position: relative; /* Needed for z-indexing context */
         }
-
-        body::before {
-            content: '';
+        
+        #starry-sky {
             position: fixed;
-            inset: 0;
-            z-index: -1;
-            background-image:
-                /* New animated dot layer */
-                radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
-                /* Existing color gradients */
-                radial-gradient(at 47% 33%, hsl(210.00, 70%, 40%) 0, transparent 59%),
-                radial-gradient(at 82% 65%, hsl(287.65, 60%, 45%) 0, transparent 55%);
-            background-size: 40px 40px, auto, auto; /* Size for each background layer */
-            animation: move-dots 10s linear infinite; /* Apply the animation */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Place canvas behind everything */
         }
-
-        /* Keyframe animation for the moving dots */
-        @keyframes move-dots {
-            from {
-                background-position: 0 0, 0 0, 0 0;
-            }
-            to {
-                background-position: 0 -40px, 0 0, 0 0; /* Move only the first background layer */
-            }
+        
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .book-container {
@@ -85,15 +79,19 @@
 
         .cta-footer {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
+            bottom: 1rem;
+            left: 1rem;
+            right: 1rem;
+            max-width: 32rem;
+            margin-left: auto;
+            margin-right: auto;
             background: rgba(17, 24, 39, 0.8);
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            padding: 1rem 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
             z-index: 50;
+            border-radius: 9999px;
         }
 
         .cta-button {
@@ -195,25 +193,66 @@
             .gantt-12-weeks {
                 grid-template-columns: 90px repeat(12, 1fr);
             }
+            .cta-footer {
+                left: 0.5rem;
+                right: 0.5rem;
+                max-width: none;
+            }
         }
     </style>
 </head>
 <body class="text-gray-200">
 
+    <header id="main-header" class="fixed top-4 left-4 right-4 z-40 glass-panel rounded-full">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Placeholder for spacing -->
+                <div class="w-10"></div>
+                <!-- Logo at the center -->
+                <div class="flex-shrink-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.08)_0%,_rgba(255,255,255,0)_80%)] rounded-full p-1">
+                    <img class="h-10 w-auto" src="https://sandeshlekhwani.github.io/ProjectProposals/Aditelectornicslogonobg.png" alt="Adit Compute World Logo">
+                </div>
+                <!-- Hamburger Menu -->
+                <div class="flex items-center">
+                     <button id="hamburger-btn" type="button" class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white" aria-controls="mobile-menu" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="block h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                         <svg class="hidden h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                </div>
+            </div>
+        </div>
+    </header>
+    <nav id="mobile-menu" class="hidden fixed top-24 left-4 right-4 z-30">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 glass-panel rounded-b-lg">
+             <a href="#" data-page-target="2" class="nav-link text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Phase 1: Shopify</a>
+             <a href="#" data-page-target="3" class="nav-link text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Phase 2: Service Automation</a>
+             <a href="#" data-page-target="4" class="nav-link text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium">Phase 3: Mobile App</a>
+        </div>
+    </nav>
+    
+    <canvas id="starry-sky"></canvas>
+
     <div id="proposalBook" class="book-container">
         <!-- Page 1: Executive Summary -->
         <div class="book-page p-4 sm:p-6 md:p-8 lg:p-10 h-full flex flex-col" data-page="1">
             <div class="book-content overflow-y-auto flex-grow pr-4">
-                <header class="text-center mb-6 border-b border-gray-700 pb-4">
-                    <img src="https://sandeshlekhwani.github.io/ProjectProposals/Aditelectornicslogonobg.png" alt="Adit Compute World Logo" class="mx-auto h-16 w-auto mb-4">
+                 <div class="flex justify-center items-center mb-4 py-6 bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.08)_0%,_rgba(255,255,255,0)_70%)] rounded-xl">
+                     <img src="https://sandeshlekhwani.github.io/ProjectProposals/Aditelectornicslogonobg.png" alt="Adit Compute World Logo" class="h-20 w-auto">
+                 </div>
+                 <div class="text-center mb-6 border-b border-gray-700 pb-4">
                     <h1 class="text-3xl md:text-4xl font-bold text-white">Project Proposal</h1>
                     <p class="text-lg text-gray-400 mt-2">For Adit Compute World</p>
-                </header>
+                </div>
 
                 <section class="max-w-4xl mx-auto">
                     <h2 class="text-2xl font-semibold text-white mb-4 text-center">Executive Summary</h2>
                     <p class="text-gray-300 leading-relaxed text-lg text-center mb-6">
-                        This proposal outlines a 3-phase roadmap to create a unified digital ecosystem for Adit Compute World. The objective is to combine eCommerce and service automation to <strong class="text-white">reduce operational overload, set up for scaling operations,</strong> and deliver customer-first experiences.
+                        This proposal outlines a 3-phase roadmap to forge a unified digital ecosystem for Adit Compute World. This strategic integration of eCommerce and service automation is designed to <strong class="text-white">reduce operational overload and establish a scalable foundation for future growth,</strong> ultimately delivering a seamless, customer-first experience.
                     </p>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
                         <div class="bg-gray-900/50 p-6 rounded-xl border border-gray-700">
@@ -250,11 +289,10 @@
         <!-- Page 2: Shopify Store -->
         <div class="book-page p-4 sm:p-6 md:p-8 lg:p-10 h-full flex-col hidden" data-page="2">
              <div class="book-content overflow-y-auto flex-grow pr-4">
-                <header class="text-center mb-6 border-b border-gray-700 pb-4">
-                    <img src="https://sandeshlekhwani.github.io/ProjectProposals/Aditelectornicslogonobg.png" alt="Adit Compute World Logo" class="mx-auto h-12 w-auto mb-2">
+                <div class="text-center mb-6 border-b border-gray-700 pb-4">
                     <h1 class="text-3xl md:text-4xl font-bold text-white">Phase 1: Shopify Store Development</h1>
                     <p class="text-lg text-gray-400 mt-2">Building Your eCommerce Foundation</p>
-                </header>
+                </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
                     <div class="lg:col-span-3">
@@ -334,11 +372,10 @@
         <!-- Page 3: Service App -->
         <div class="book-page p-4 sm:p-6 md:p-8 lg:p-10 h-full flex-col hidden" data-page="3">
              <div class="book-content overflow-y-auto flex-grow pr-4">
-                <header class="text-center mb-6 border-b border-gray-700 pb-4">
-                    <img src="https://sandeshlekhwani.github.io/ProjectProposals/Aditelectornicslogonobg.png" alt="Adit Compute World Logo" class="mx-auto h-12 w-auto mb-2">
+                 <div class="text-center mb-6 border-b border-gray-700 pb-4">
                     <h1 class="text-3xl md:text-4xl font-bold text-white">Phase 2: Service Query Automation</h1>
                     <p class="text-lg text-gray-400 mt-2">A Custom WebApp for After-Sales Support</p>
-                </header>
+                </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
                     <div class="lg:col-span-3">
@@ -410,11 +447,10 @@
         <!-- Page 4: Mobile App -->
         <div class="book-page p-4 sm:p-6 md:p-8 lg:p-10 h-full flex-col hidden" data-page="4">
              <div class="book-content overflow-y-auto flex-grow pr-4">
-                <header class="text-center mb-6 border-b border-gray-700 pb-4">
-                    <img src="https://sandeshlekhwani.github.io/ProjectProposals/Aditelectornicslogonobg.png" alt="Adit Compute World Logo" class="mx-auto h-12 w-auto mb-2">
+                <div class="text-center mb-6 border-b border-gray-700 pb-4">
                     <h1 class="text-3xl md:text-4xl font-bold text-white">Phase 3: Mobile App Development</h1>
                     <p class="text-lg text-gray-400 mt-2">From Shopify Store to iOS & Android Apps</p>
-                </header>
+                </div>
 
                 <div class="bg-yellow-900/50 border border-yellow-700 text-yellow-300 p-4 rounded-lg text-center mb-6">
                     <p><strong class="font-bold">Recommendation:</strong> This phase is not recommended until the user base crosses 100,000 and there are at least 400 daily active users.</p>
@@ -480,12 +516,12 @@
     </div>
 
     <footer class="cta-footer">
-        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 justify-center px-4">
-            <button id="accept-cta-btn" class="cta-button bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-lg text-center">
-                I Accept, Let's Start Work
+        <div class="w-full flex flex-row gap-4 justify-center items-center px-1">
+            <button id="accept-cta-btn" class="cta-button w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-5 rounded-full text-base text-center">
+                I Accept, Lets Start
             </button>
-            <button id="questions-cta-btn" class="cta-button cta-button-secondary bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg text-center">
-                I Have Some Questions
+            <button id="questions-cta-btn" class="cta-button cta-button-secondary w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-5 rounded-full text-base text-center">
+                I Have Questions
             </button>
         </div>
     </footer>
@@ -693,11 +729,102 @@
                     }
                 });
             });
+
+            // Hamburger Menu Logic
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const navLinks = document.querySelectorAll('.nav-link');
+
+            if (hamburgerBtn && mobileMenu) {
+                const hamburgerIcons = hamburgerBtn.querySelectorAll('svg');
+
+                hamburgerBtn.addEventListener('click', () => {
+                    const isMenuOpen = !mobileMenu.classList.contains('hidden');
+                    mobileMenu.classList.toggle('hidden');
+                    hamburgerBtn.setAttribute('aria-expanded', !isMenuOpen);
+                    hamburgerIcons.forEach(icon => icon.classList.toggle('hidden'));
+                });
+
+                navLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const pageTarget = parseInt(link.dataset.pageTarget);
+                        changePage(pageTarget);
+                        // Close menu after click
+                        mobileMenu.classList.add('hidden');
+                        hamburgerBtn.setAttribute('aria-expanded', 'false');
+                        // Ensure correct icons are shown (closed state)
+                        if (hamburgerIcons.length === 2) {
+                            hamburgerIcons[0].classList.remove('hidden');
+                            hamburgerIcons[1].classList.add('hidden');
+                        }
+                    });
+                });
+            }
+            
+            // Starry Sky background script
+            const canvas = document.getElementById('starry-sky');
+            const ctx = canvas.getContext('2d');
+            let stars = [];
+            const numStars = 800;
+
+            function setCanvasSize() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+
+            function createStars() {
+                stars = [];
+                for (let i = 0; i < numStars; i++) {
+                    stars.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        radius: Math.random() * 1.5 + 0.5,
+                        alpha: Math.random(),
+                        velocity: {
+                            y: Math.random() * 0.2 + 0.1
+                        }
+                    });
+                }
+            }
+
+            function drawStars() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                stars.forEach(star => {
+                    ctx.beginPath();
+                    ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                    ctx.fill();
+                });
+            }
+
+            function updateStars() {
+                stars.forEach(star => {
+                    star.y += star.velocity.y;
+                    if (star.y > canvas.height) {
+                        star.y = 0;
+                        star.x = Math.random() * canvas.width;
+                    }
+                });
+            }
+
+            function animate() {
+                drawStars();
+                updateStars();
+                requestAnimationFrame(animate);
+            }
+
+            window.addEventListener('resize', () => {
+                setCanvasSize();
+                createStars();
+            });
+
+            setCanvasSize();
+            createStars();
+            animate();
         });
     </script>
 
 </body>
 </html>
-
-
 
