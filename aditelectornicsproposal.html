@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Proposal - Adit Compute World</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Styles for the Glassmorphic Book Layout */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #111827; /* Dark background */
+            background-image:
+                radial-gradient(at 47% 33%, hsl(210.00, 70%, 40%) 0, transparent 59%),
+                radial-gradient(at 82% 65%, hsl(287.65, 60%, 45%) 0, transparent 55%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            padding-bottom: 120px; /* Space for the fixed CTA footer */
+        }
+
+        .book-container {
+            width: 100%;
+            max-width: 1200px;
+            aspect-ratio: 16 / 9;
+            perspective: 2500px;
+        }
+
+        .book-page {
+            background: rgba(255, 255, 255, 0.05); /* Semi-transparent white */
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px); /* For Safari */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.5rem; /* More rounded corners */
+            transition: opacity 0.5s ease-in-out;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* Scrollbar styling */
+        .book-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        .book-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .book-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .book-content::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+
+        .cta-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(17, 24, 39, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 50;
+        }
+
+        .cta-button {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px 0 rgba(0, 0, 0, 0.2);
+        }
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px 0 rgba(46, 184, 98, 0.4);
+        }
+        .cta-button-secondary:hover {
+            box-shadow: 0 8px 25px 0 rgba(59, 130, 246, 0.4);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .modal-content {
+             background: rgba(23, 31, 45, 0.8);
+             backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        /* Custom Checkbox */
+        .custom-checkbox:checked {
+            background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M12.207 4.793a1 1 0 010 1.414l-5 5a1 1 0 01-1.414 0l-2-2a1 1 0 011.414-1.414L6.5 9.086l4.293-4.293a1 1 0 011.414 0z'/%3e%3c/svg%3e");
+            background-color: #2563eb; /* blue-600 */
+            border-color: #2563eb;
+        }
+
+        /* Gantt Chart Styles */
+        .gantt-container {
+            display: grid;
+            gap: 4px;
+            font-size: 0.75rem;
+            color: #d1d5db; /* gray-300 */
+        }
+        .gantt-4-weeks {
+            grid-template-columns: 150px repeat(4, 1fr);
+        }
+        .gantt-7-weeks {
+            grid-template-columns: 150px repeat(7, 1fr);
+        }
+        .gantt-12-weeks {
+            grid-template-columns: 150px repeat(12, 1fr);
+        }
+        .gantt-header {
+            grid-column: 2 / -1;
+            display: grid;
+            text-align: center;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .gantt-task-label {
+            grid-column: 1 / 2;
+            padding: 4px 8px;
+            text-align: right;
+            border-right: 1px solid rgba(255, 255, 255, 0.2);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .gantt-bar-container {
+            grid-column: 2 / -1;
+            position: relative;
+            padding: 4px 0;
+        }
+        .gantt-bar {
+            position: absolute;
+            height: 100%;
+            top: 0;
+            background-image: linear-gradient(to right, var(--tw-gradient-stops));
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            color: white;
+            overflow: hidden;
+        }
+
+        @media (max-width: 768px) {
+            .book-container {
+                aspect-ratio: auto;
+                height: auto;
+                max-height: calc(100vh - 130px);
+            }
+            .gantt-4-weeks {
+                grid-template-columns: 90px repeat(4, 1fr);
+            }
+            .gantt-7-weeks {
+                grid-template-columns: 90px repeat(7, 1fr);
+            }
+            .gantt-12-weeks {
+                grid-template-columns: 90px repeat(12, 1fr);
+            }
+        }
+    </style>
+</head>
+<body class="text-gray-200">
+
+    <div id="proposalBook" class="book-container">
+        <!-- Page 1: Executive Summary -->
+        <div class="book-page p-4 sm:p-6 md:p-8 lg:p-10 h-full flex flex-col" data-page="1">
+            <div class="book-content overflow-y-auto flex-grow pr-4">
+                <header class="text-center mb-6 border-b border-gray-700 pb-4">
+                    <h1 class="text-3xl md:text-4xl font-bold text-white">Project Proposal</h1>
+                    <p class="text-lg text-gray-400 mt-2">For Adit Compute World</p>
+                </header>
+
+                <section class="max-w-4xl mx-auto">
+                    <h2 class="text-2xl font-semibold text-white mb-4 text-center">Executive Summary</h2>
+                    <p class="text-gray-300 leading-relaxed text-lg text-center mb-6">
+                        This proposal outlines a 3-phase roadmap to create a unified digital ecosystem for Adit Compute World. The objective is to combine eCommerce and service automation to <strong class="text-white">reduce operational overload, set up for scaling operations,</strong> and deliver customer-first experiences.
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-center">
+                        <div class="bg-gray-900/50 p-6 rounded-xl border border-gray-700">
+                            <h3 class="text-xl font-bold text-sky-400 mb-2">Phase 1</h3>
+                            <p class="font-semibold text-white text-lg">Shopify Store</p>
+                            <p class="text-gray-400 mt-1">A modern, electronics-focused eCommerce platform.</p>
+                        </div>
+                        <div class="bg-gray-900/50 p-6 rounded-xl border border-gray-700">
+                           <h3 class="text-xl font-bold text-amber-400 mb-2">Phase 2</h3>
+                           <p class="font-semibold text-white text-lg">Service Automation</p>
+                           <p class="text-gray-400 mt-1">A custom web-app for streamlined after-sales support.</p>
+                        </div>
+                        <div class="bg-gray-900/50 p-6 rounded-xl border border-gray-700">
+                            <h3 class="text-xl font-bold text-purple-400 mb-2">Phase 3</h3>
+                            <p class="font-semibold text-white text-lg">Mobile App</p>
+                            <p class="text-gray-400 mt-1">Dedicated iOS & Android apps for enhanced engagement.</p>
+                        </div>
+                    </div>
+                    <div class="mt-8 pt-6 border-t border-gray-700">
+                        <h3 class="text-xl font-semibold text-white text-center mb-3">Our Commitment to Partnership</h3>
+                        <p class="text-gray-400 text-center max-w-2xl mx-auto">
+                            We believe in building long-term relationships. This proposal includes our commitment to provide <strong class="text-white">continued support and handle small developments for up to 18 months</strong> post-completion of the final delivered phase. This ensures your digital ecosystem runs smoothly and evolves with your business needs.
+                        </p>
+                    </div>
+                </section>
+            </div>
+            
+            <div class="flex justify-end items-center pt-4">
+                 <span class="text-sm text-gray-500 mr-4">Page 1 of 4</span>
+                <button onclick="changePage(2)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Next →</button>
+            </div>
+        </div>
+
+        <!-- Page 2: Shopify Store -->
+        <div class="book-page p-4 sm:p-6 md:p-8 lg:p-10 h-full flex-col hidden" data-page="2">
+             <div class="book-content overflow-y-auto flex-grow pr-4">
+                <header class="text-center mb-6 border-b border-gray-700 pb-4">
+                    <h1 class="text-3xl md:text-4xl font-bold text-white">Phase 1: Shopify Store Development</h1>
+                    <p class="text-lg text-gray-400 mt-2">Building Your eCommerce Foundation</p>
+                </header>
+
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                    <div class="lg:col-span-3">
+                         <p class="text-gray-300 mb-6">We will construct a complete, modern eCommerce storefront designed for the electronics market. Key deliverables include a custom responsive theme, specialized product import tools, integrated customer communication via WhatsApp, appointment booking, and secure payment processing to ensure a seamless sales experience from start to finish.</p>
+                         <h3 class="font-bold text-sky-400 mb-2">Investment & Charges</h3>
+                         <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-700 mb-4">
+                            <p class="text-gray-400">One-Time Development Cost</p>
+                            <p class="text-3xl font-bold text-white">₹1,86,000</p>
+                         </div>
+                         <h4 class="font-semibold text-white mb-2">Cost Breakup:</h4>
+                         <ul class="list-disc list-inside space-y-2 text-gray-300">
+                             <li><strong>Store Setup & App Configuration:</strong> ₹30,000</li>
+                             <li><strong>Shopify Metafields & Flow Automation:</strong> ₹25,000</li>
+                             <li><strong>Advanced Theme Liquid Customization:</strong> ₹25,000</li>
+                             <li><strong>Custom Theme Development:</strong> ₹30,000</li>
+                             <li><strong>Payment Gateway & API Integration:</strong> ₹26,000</li>
+                             <li><strong>Croma Scraper Extension:</strong> ₹15,000</li>
+                             <li><strong>HP Scraper Extension:</strong> ₹15,000</li>
+                             <li><strong>Initial Product Setup & Optimization (100 SKUs):</strong> ₹15,000</li>
+                             <li><strong>Custom Appointment & WhatsApp Feature:</strong> ₹5,000</li>
+                         </ul>
+                         <hr class="border-gray-700 my-4">
+                          <h4 class="font-semibold text-white mb-2">Recurring & Additional Charges:</h4>
+                         <ul class="list-disc list-inside space-y-2 text-gray-300">
+                             <li><strong>Recurring Shopify Fee:</strong> ₹2,500/month (starts post go-live)</li>
+                             <li><strong>Additional Charges:</strong> Costs for paid Shopify apps/extensions are separate and will be billed at actuals.</li>
+                         </ul>
+                    </div>
+                    <div class="lg:col-span-2">
+                        <h3 class="font-bold text-white mb-2">Key Deliverables</h3>
+                         <ul class="list-disc list-inside space-y-2 text-gray-300">
+                            <li>Custom, responsive Shopify theme</li>
+                            <li>Product import workflow for Croma/HP</li>
+                            <li>WhatsApp & Appointment Booking integration</li>
+                            <li>Payment gateway setup (Razorpay/Cashfree)</li>
+                            <li>Upload of 100 initial optimized products</li>
+                            <li>Full training and documentation</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Gantt Chart for Phase 1 -->
+                <div class="mt-8">
+                    <h3 class="text-xl font-semibold text-white mb-4 text-center">Phase 1 Timeline: ~4 Weeks</h3>
+                    <div class="gantt-container gantt-4-weeks">
+                        <div class="gantt-header" style="grid-template-columns: repeat(4, 1fr);"><span>W1</span><span>W2</span><span>W3</span><span>W4</span></div>
+                        <div class="gantt-task-label">Discovery</div>
+                        <div class="gantt-bar-container"><div class="gantt-bar from-sky-500 to-cyan-400" style="left: 0; width: calc(100%/4 * 0.75);"></div></div>
+                        <div class="gantt-task-label">Theme Customization</div>
+                        <div class="gantt-bar-container"><div class="gantt-bar from-sky-500 to-cyan-400" style="left: calc(100%/4 * 0.5); width: calc(100%/4 * 1.5);"></div></div>
+                        <div class="gantt-task-label">Store Setup</div>
+                        <div class="gantt-bar-container"><div class="gantt-bar from-sky-500 to-cyan-400" style="left: calc(100%/4 * 1.5); width: calc(100%/4 * 1);"></div></div>
+                        <div class="gantt-task-label">Product Import</div>
+                        <div class="gantt-bar-container"><div class="gantt-bar from-sky-500 to-cyan-400" style="left: calc(100%/4 * 2); width: calc(100%/4 * 1);"></div></div>
+                        <div class="gantt-task-label">Integrations</div>
+                        <div class="gantt-bar-container"><div class="gantt-bar from-sky-500 to-cyan-400" style="left: calc(100%/4 * 2.5); width: calc(100%/4 * 1);"></div></div>
+                        <div class="gantt-task-label">Testing & Handover</div>
+                        <div class="gantt-bar-container"><div class="gantt-bar from-teal-500 to-emerald-400" style="left: calc(100%/4 * 3); width: calc(100%/4 * 1);"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4">
+                <button onclick="changePage(1)" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">← Previous</button>
+                 <span class="text-sm text-gray-500">Page 2 of 4</span>
+                <button onclick="changePage(3)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Next →</button>
+            </div>
+        </div>
+
+        <!-- Page 3: Service App -->
+        <div class="book-page p-4 sm:p-6 md:p-8 lg:p-10 h-full flex-col hidden" data-page="3">
+             <div class="book-content overflow-y-auto flex-grow pr-4">
+                <header class="text-center mb-6 border-b border-gray-700 pb-4">
+                    <h1 class="text-3xl md:text-4xl font-bold text-white">Phase 2: Service Query Automation</h1>
+                    <p class="text-lg text-gray-400 mt-2">A Custom WebApp for After-Sales Support</p>
+                </header>
+
+                <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                    <div class="lg:col-span-3">
+                        <p class="text-gray-300 mb-6">We will develop a full-stack web application from scratch. The customer-facing form and admin dashboard will be built with React/Next.js for a modern UI. The backend, built on Node.js, will handle the business logic for ticket assignment and integrate with the WhatsApp Business API for real-time notifications to engineers.</p>
+                         <h3 class="font-bold text-amber-400 mb-2">Investment</h3>
+                         <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-700 mb-4">
+                            <p class="text-gray-400">One-Time Development Cost</p>
+                            <p class="text-3xl font-bold text-white">₹1,20,000</p>
+                         </div>
+                         <h4 class="font-semibold text-white mb-2">Cost Breakup:</h4>
+                         <ul class="list-disc list-inside space-y-2 text-gray-300">
+                             <li><strong>Backend Development (Node.js API & Database):</strong> ₹45,000</li>
+                             <li><strong>Frontend Development (React Admin & Client):</strong> ₹40,000</li>
+                             <li><strong>UI/UX Design & Wireframing:</strong> ₹15,000</li>
+                             <li><strong>WhatsApp API Integration:</strong> ₹10,000</li>
+                             <li><strong>Deployment & Infrastructure Setup:</strong> ₹10,000</li>
+                         </ul>
+                    </div>
+                    <div class="lg:col-span-2 bg-gray-900/50 p-6 rounded-lg border border-gray-700">
+                        <h3 class="font-bold text-white mb-2">Tech Stack & Deliverables</h3>
+                        <div class="flex flex-wrap gap-2 text-sm mb-4">
+                            <span class="bg-sky-500/20 text-sky-300 px-2 py-1 rounded">React</span>
+                            <span class="bg-green-500/20 text-green-300 px-2 py-1 rounded">Node.js</span>
+                            <span class="bg-blue-500/20 text-blue-300 px-2 py-1 rounded">PostgreSQL</span>
+                            <span class="bg-emerald-500/20 text-emerald-300 px-2 py-1 rounded">WhatsApp API</span>
+                        </div>
+                        <ul class="list-disc list-inside space-y-2 text-gray-300">
+                           <li>Customer-facing ticket submission form</li>
+                           <li>Admin dashboard with full ticket tracking</li>
+                           <li>Automated engineer assignment logic</li>
+                           <li>Real-time WhatsApp notifications</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Gantt Chart for Phase 2 -->
+                <div class="mt-8">
+                    <h3 class="text-xl font-semibold text-white mb-4 text-center">Phase 2 Timeline: ~4 Weeks</h3>
+                     <div class="gantt-container gantt-4-weeks">
+                        <div class="gantt-header" style="grid-template-columns: repeat(4, 1fr);">
+                            <span>W1</span><span>W2</span><span>W3</span><span>W4</span>
+                        </div>
+                        <div class="gantt-task-label">Requirements</div>
+                        <div class="gantt-bar-container"><div class="gantt-bar from-amber-500 to-orange-400" style="left: 0; width: calc(100%/4 * 1);"></div></div>
+                        <div class="gantt-task-label">Backend + API</div>
+                        <div class="gantt-bar-container"><div class="gantt-bar from-amber-500 to-orange-400" style="left: calc(100%/4 * 1); width: calc(100%/4 * 1.5);"></div></div>
+                        <div class="gantt-task-label">Frontend Dev</div>
+                        <div class="gantt-bar-container"><div class="gantt-bar from-amber-500 to-orange-400" style="left: calc(100%/4 * 1.5); width: calc(100%/4 * 1.5);"></div></div>
+                        <div class="gantt-task-label">Testing & Deploy</div>
+                        <div class="gantt-bar-container"><div class="gantt-bar from-red-500 to-rose-400" style="left: calc(100%/4 * 3); width: calc(100%/4 * 1);"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4">
+                <button onclick="changePage(2)" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">← Previous</button>
+                 <span class="text-sm text-gray-500">Page 3 of 4</span>
+                <button onclick="changePage(4)" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">Next →</button>
+            </div>
+        </div>
+        
+        <!-- Page 4: Mobile App -->
+        <div class="book-page p-4 sm:p-6 md:p-8 lg:p-10 h-full flex-col hidden" data-page="4">
+             <div class="book-content overflow-y-auto flex-grow pr-4">
+                <header class="text-center mb-6 border-b border-gray-700 pb-4">
+                    <h1 class="text-3xl md:text-4xl font-bold text-white">Phase 3: Mobile App Development</h1>
+                    <p class="text-lg text-gray-400 mt-2">From Shopify Store to iOS & Android Apps</p>
+                </header>
+
+                <div class="bg-yellow-900/50 border border-yellow-700 text-yellow-300 p-4 rounded-lg text-center mb-6">
+                    <p><strong class="font-bold">Recommendation:</strong> This phase is not recommended until the user base crosses 100,000 and there are at least 400 daily active users.</p>
+                </div>
+                
+                 <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                    <div class="lg:col-span-3">
+                         <p class="text-gray-300 mb-6">Launch dedicated iOS & Android apps to boost engagement. We recommend React Native with the Shopify Storefront API for faster, cross-platform development, ensuring a consistent user experience and efficient maintenance.</p>
+                         <h3 class="font-bold text-purple-400 mb-2">Investment</h3>
+                         <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-700 mb-4">
+                            <p class="text-gray-400">One-Time Development Cost</p>
+                            <p class="text-3xl font-bold text-white">₹5,00,000</p>
+                         </div>
+                         <h4 class="font-semibold text-white mb-2">Cost Breakup:</h4>
+                         <ul class="list-disc list-inside space-y-2 text-gray-300">
+                             <li><strong>React Native Core Development:</strong> ₹2,00,000</li>
+                             <li><strong>Shopify Storefront API Integration:</strong> ₹80,000</li>
+                             <li><strong>UI/UX Design for iOS & Android:</strong> ₹70,000</li>
+                             <li><strong>Push Notifications & 3rd Party SDKs:</strong> ₹50,000</li>
+                             <li><strong>Testing & QA Across Devices:</strong> ₹50,000</li>
+                             <li><strong>App Store & Play Store Deployment:</strong> ₹50,000</li>
+                         </ul>
+                    </div>
+                     <div class="lg:col-span-2">
+                         <h3 class="font-bold text-purple-400 mb-2">Key Features</h3>
+                         <ul class="list-disc list-inside space-y-2 text-gray-300">
+                             <li>Fully functional native-like iOS & Android apps</li>
+                             <li>Product browsing, cart, and secure checkout</li>
+                             <li>Push notifications via Firebase/OneSignal</li>
+                             <li>Deployment to Google Play & Apple App Store</li>
+                         </ul>
+                     </div>
+                </div>
+
+                <!-- Gantt Chart for Phase 3 -->
+                <div class="mt-8">
+                    <h3 class="text-xl font-semibold text-white mb-4 text-center">Phase 3 Timeline: ~7 Weeks</h3>
+                    <div class="gantt-container gantt-7-weeks">
+                        <div class="gantt-header" style="grid-template-columns: repeat(7, 1fr);"><script>for(let i=1; i<=7; i++) document.write(`<span>W${i}</span>`)</script></div>
+                        <div class="gantt-task-label">App Design (UI/UX)</div>
+                        <div class="gantt-bar-container"><div class="gantt-bar from-purple-500 to-fuchsia-400" style="left: 0; width: calc(100%/7 * 1);"></div></div>
+                        <div class="gantt-task-label">Development & API</div>
+                        <div class="gantt-bar-container"><div class="gantt-bar from-purple-500 to-fuchsia-400" style="left: calc(100%/7 * 1); width: calc(100%/7 * 4);"></div></div>
+                        <div class="gantt-task-label">Testing & Launch</div>
+                        <div class="gantt-bar-container"><div class="gantt-bar from-pink-500 to-rose-400" style="left: calc(100%/7 * 5); width: calc(100%/7 * 2);"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex justify-between items-center pt-4">
+                <button onclick="changePage(3)" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg transition-colors">← Previous</button>
+                 <span class="text-sm text-gray-500">Page 4 of 4</span>
+                 <span></span> <!-- Empty span for spacing -->
+            </div>
+        </div>
+    </div>
+
+    <footer class="cta-footer">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row gap-4 justify-center px-4">
+            <button id="accept-cta-btn" class="cta-button bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-lg text-center">
+                I Accept, Let's Start Work
+            </button>
+            <button id="questions-cta-btn" class="cta-button cta-button-secondary bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg text-lg text-center">
+                I Have Some Questions
+            </button>
+        </div>
+    </footer>
+
+    <!-- Accept Modal -->
+    <div id="accept-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
+        <div class="modal-content w-full max-w-lg rounded-2xl p-6">
+            <h3 class="text-2xl font-bold text-white mb-4">Confirm Phases to Proceed</h3>
+            <p class="text-gray-400 mb-6">Select the phases you would like to approve. The total investment will be calculated accordingly.</p>
+            <div class="space-y-4">
+                <label class="flex items-center p-4 bg-gray-900/50 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors cursor-pointer">
+                    <input type="checkbox" id="phase1-check" value="186000" class="custom-checkbox h-6 w-6 rounded-md border-gray-600 bg-gray-800 text-blue-600 focus:ring-blue-500" checked>
+                    <span class="ml-4 flex-grow">
+                        <span class="font-bold text-white">Phase 1: Shopify Store</span>
+                        <span class="block text-sm text-gray-400">₹1,86,000</span>
+                    </span>
+                </label>
+                 <label class="flex items-center p-4 bg-gray-900/50 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors cursor-pointer">
+                    <input type="checkbox" id="phase2-check" value="120000" class="custom-checkbox h-6 w-6 rounded-md border-gray-600 bg-gray-800 text-blue-600 focus:ring-blue-500" checked>
+                    <span class="ml-4 flex-grow">
+                        <span class="font-bold text-white">Phase 2: Service Automation</span>
+                        <span class="block text-sm text-gray-400">₹1,20,000</span>
+                    </span>
+                </label>
+                 <label class="flex items-center p-4 bg-gray-900/50 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors cursor-pointer">
+                    <input type="checkbox" id="phase3-check" value="500000" class="custom-checkbox h-6 w-6 rounded-md border-gray-600 bg-gray-800 text-blue-600 focus:ring-blue-500">
+                    <span class="ml-4 flex-grow">
+                        <span class="font-bold text-white">Phase 3: Mobile App</span>
+                        <span class="block text-sm text-gray-400">₹5,00,000</span>
+                    </span>
+                </label>
+            </div>
+            <div class="flex justify-end gap-4 mt-8">
+                <button onclick="closeModal('accept-modal')" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Cancel</button>
+                <button id="proceed-accept-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questions Modal -->
+    <div id="questions-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay hidden">
+        <div class="modal-content w-full max-w-lg rounded-2xl p-6">
+            <h3 class="text-2xl font-bold text-white mb-6">What would you like to ask?</h3>
+            <div class="space-y-3" id="questions-list">
+                <label class="flex items-center p-3 bg-gray-900/50 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors cursor-pointer">
+                    <input type="radio" name="question_option" value="Can we discuss the timeline for Phase 1 in more detail?" class="h-4 w-4 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
+                    <span class="ml-3 text-white">Timeline for Phase 1</span>
+                </label>
+                <label class="flex items-center p-3 bg-gray-900/50 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors cursor-pointer">
+                    <input type="radio" name="question_option" value="I have a question about the payment schedule." class="h-4 w-4 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
+                    <span class="ml-3 text-white">Payment Schedule</span>
+                </label>
+                 <label class="flex items-center p-3 bg-gray-900/50 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors cursor-pointer">
+                    <input type="radio" name="question_option" value="Could you elaborate on the technology stack for the Service Automation app?" class="h-4 w-4 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
+                    <span class="ml-3 text-white">Tech stack for Phase 2</span>
+                </label>
+                 <label class="flex items-center p-3 bg-gray-900/50 rounded-lg border border-gray-700 hover:border-blue-500 transition-colors cursor-pointer">
+                    <input type="radio" name="question_option" value="other" class="h-4 w-4 text-blue-600 bg-gray-700 border-gray-600 focus:ring-blue-500">
+                    <span class="ml-3 text-white">Other...</span>
+                </label>
+                <textarea id="other-question-text" placeholder="Type your question here..." class="hidden w-full bg-gray-800 border-gray-600 rounded-lg mt-2 p-2 text-white focus:ring-blue-500 focus:border-blue-500"></textarea>
+            </div>
+             <div class="flex justify-end gap-4 mt-8">
+                <button onclick="closeModal('questions-modal')" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded-lg">Cancel</button>
+                <button id="send-question-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Send</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        let currentPage = 1;
+        const pages = document.querySelectorAll('.book-page');
+        const baseWhatsappUrl = 'https://wa.me/919876543210?text=';
+
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function handleAccept() {
+            const phases = [];
+            let totalCost = 0;
+            const phase1Check = document.getElementById('phase1-check');
+            const phase2Check = document.getElementById('phase2-check');
+            const phase3Check = document.getElementById('phase3-check');
+
+            if (phase1Check.checked) {
+                phases.push('Phase 1 (Shopify Store)');
+                totalCost += parseInt(phase1Check.value);
+            }
+            if (phase2Check.checked) {
+                phases.push('Phase 2 (Service Automation)');
+                totalCost += parseInt(phase2Check.value);
+            }
+            if (phase3Check.checked) {
+                phases.push('Phase 3 (Mobile App)');
+                totalCost += parseInt(phase3Check.value);
+            }
+
+            if (phases.length === 0) {
+                alert('Please select at least one phase to proceed.');
+                return;
+            }
+
+            const formattedCost = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 }).format(totalCost);
+            const message = `I've reviewed the proposal for Adit Compute World and I would like to accept and proceed with the following phase(s): ${phases.join(', ')}. The total approved investment is ${formattedCost}. Let's discuss the next steps.`;
+            
+            window.open(baseWhatsappUrl + encodeURIComponent(message), '_blank');
+            closeModal('accept-modal');
+        }
+        
+        function handleQuestion() {
+            const selectedOption = document.querySelector('input[name="question_option"]:checked');
+            if (!selectedOption) {
+                alert('Please select a question or choose "Other".');
+                return;
+            }
+
+            let question = selectedOption.value;
+            if (question === 'other') {
+                const otherText = document.getElementById('other-question-text').value.trim();
+                if (!otherText) {
+                    alert('Please type your question in the text box.');
+                    return;
+                }
+                question = otherText;
+            }
+
+            const message = `Regarding the proposal for Adit Compute World, I have a question: ${question}`;
+            window.open(baseWhatsappUrl + encodeURIComponent(message), '_blank');
+            closeModal('questions-modal');
+        }
+
+        function changePage(pageNumber) {
+            const currentPageElement = document.querySelector(`[data-page="${currentPage}"]`);
+            const nextPageElement = document.querySelector(`[data-page="${pageNumber}"]`);
+            
+            if (!nextPageElement) return;
+
+            currentPageElement.classList.add('opacity-0');
+            setTimeout(() => {
+                currentPageElement.classList.add('hidden');
+                currentPageElement.classList.remove('flex', 'opacity-0');
+                
+                nextPageElement.classList.remove('hidden');
+                setTimeout(() => {
+                    nextPageElement.classList.add('flex');
+                    nextPageElement.classList.remove('opacity-0');
+                }, 20);
+                currentPage = pageNumber;
+            }, 300);
+        }
+
+        // Initialize first page and CTAs
+        document.addEventListener('DOMContentLoaded', () => {
+            pages.forEach(page => {
+                if (page.dataset.page != '1') {
+                    page.classList.add('hidden', 'opacity-0');
+                } else {
+                     page.classList.add('flex');
+                }
+            });
+
+            // Modal Triggers
+            document.getElementById('accept-cta-btn').addEventListener('click', () => openModal('accept-modal'));
+            document.getElementById('questions-cta-btn').addEventListener('click', () => openModal('questions-modal'));
+            
+            // Modal Actions
+            document.getElementById('proceed-accept-btn').addEventListener('click', handleAccept);
+            document.getElementById('send-question-btn').addEventListener('click', handleQuestion);
+
+            // Question modal logic for "Other" text area
+            document.querySelectorAll('input[name="question_option"]').forEach(radio => {
+                radio.addEventListener('change', (event) => {
+                    const otherTextArea = document.getElementById('other-question-text');
+                    if (event.target.value === 'other') {
+                        otherTextArea.classList.remove('hidden');
+                    } else {
+                        otherTextArea.classList.add('hidden');
+                    }
+                });
+            });
+            
+             // Close modal on overlay click
+            document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                overlay.addEventListener('click', (event) => {
+                    if (event.target === overlay) {
+                        closeModal(overlay.id);
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
+
+
+
