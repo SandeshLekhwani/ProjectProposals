@@ -155,10 +155,12 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding-bottom: 160px; /* Increased padding to avoid overlap with stacked CTA buttons */
+            }
             .book-container {
                 aspect-ratio: auto;
                 height: auto;
-                max-height: calc(100vh - 130px);
             }
             .gantt-4-weeks {
                 grid-template-columns: 90px repeat(4, 1fr);
@@ -635,6 +637,7 @@
 
 </body>
 </html>
+
 
 
 
